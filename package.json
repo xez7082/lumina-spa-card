@@ -1,6 +1,6 @@
 {
   "name": "lumina-spa-card",
-  "version": "2.2.0",
+  "version": "1.0.0",
   "description": "Premium Spa monitoring card for Home Assistant",
   "main": "lumina-spa-card.js",
   "keywords": [
