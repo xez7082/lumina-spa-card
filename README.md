@@ -5,7 +5,7 @@ Une carte Home Assistant inspirée du style Lumina Energy pour gérer votre spa.
 ## Installation via HACS
 1. Ouvrez HACS.
 2. Cliquez sur les 3 points (en haut à droite) -> **Custom Repositories**.
-3. Ajoutez l'URL de ce dépôt GitHub.
+3. Ajoutez l'URL: https://github.com/xez7082/lumina-spa-card
 4. Sélectionnez **Lovelace** comme catégorie.
 5. Cliquez sur **Install**.
 
