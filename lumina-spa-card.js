@@ -14,17 +14,9 @@ class LuminaSpaCard extends LitElement {
   }
 
   setConfig(config) {
-    if (!config.entity_water_temp) {
-      throw new Error("Vous devez définir l'entité 'entity_water_temp' !");
-    }
-    this.config = {
-      card_title: 'MON SPA',
-      background_image: '/local/preview.png',
-      ...config
-    };
+    this.config = config;
   }
 
-  // Utilitaire pour récupérer l'état réel de HA
   _getDisplayState(entityId) {
     if (!this.hass || !this.hass.states[entityId]) return { state: '--', unit: '' };
     const stateObj = this.hass.states[entityId];
@@ -43,51 +35,30 @@ class LuminaSpaCard extends LitElement {
     const power = this._getDisplayState(this.config.entity_power);
 
     return html`
-      <ha-card style="background-image: url('${this.config.background_image}')">
-        <div class="overlay">
-          <div class="header">${this.config.card_title}</div>
-          
-          <div class="main-container">
-            <div class="data-column">
-              
-              <div class="glass-block">
-                <div class="block-title">TEMPÉRATURE</div>
-                <div class="row">
-                  <div class="item">
-                    <ha-icon icon="mdi:thermometer"></ha-icon>
-                    <div class="info"><span class="val">${water.state}${water.unit}</span></div>
-                  </div>
-                </div>
-              </div>
+      <ha-card style="background-image: url('${this.config.background_image}');">
+        <div class="header">${this.config.card_title || 'MON SPA'}</div>
 
-              <div class="glass-block">
-                <div class="block-title">CHIMIE SPA</div>
-                <div class="row">
-                  <div class="item">
-                    <ha-icon icon="mdi:ph"></ha-icon>
-                    <div class="info"><span class="val">${ph.state}</span></div>
-                  </div>
-                  <div class="item">
-                    <ha-icon icon="mdi:test-tube"></ha-icon>
-                    <div class="info"><span class="val">${orp.state} ${orp.unit || 'mV'}</span></div>
-                  </div>
-                </div>
-              </div>
+        <div class="glass-block" style="left: ${this.config.pos_temp_x || '10%'}; top: ${this.config.pos_temp_y || '20%'};">
+          <div class="block-title">TEMPÉRATURE</div>
+          <div class="row">
+            <ha-icon icon="mdi:thermometer"></ha-icon>
+            <span class="val">${water.state}${water.unit}</span>
+          </div>
+        </div>
 
-              <div class="glass-block">
-                <div class="block-title">ÉNERGIE</div>
-                <div class="row">
-                  <div class="item">
-                    <ha-icon icon="mdi:lightning-bolt"></ha-icon>
-                    <div class="info"><span class="val">${power.state}${power.unit}</span></div>
-                  </div>
-                </div>
-              </div>
+        <div class="glass-block" style="left: ${this.config.pos_chem_x || '10%'}; top: ${this.config.pos_chem_y || '45%'};">
+          <div class="block-title">CHIMIE SPA</div>
+          <div class="row">
+            <ha-icon icon="mdi:ph"></ha-icon><span class="val">${ph.state}</span>
+            <ha-icon icon="mdi:test-tube" style="margin-left:8px"></ha-icon><span class="val">${orp.state}</span>
+          </div>
+        </div>
 
-            </div>
-            
-            <div class="spa-column">
-              </div>
+        <div class="glass-block" style="left: ${this.config.pos_energy_x || '10%'}; top: ${this.config.pos_energy_y || '70%'};">
+          <div class="block-title">ÉNERGIE</div>
+          <div class="row">
+            <ha-icon icon="mdi:lightning-bolt"></ha-icon>
+            <span class="val">${power.state}${power.unit}</span>
           </div>
         </div>
       </ha-card>
@@ -99,83 +70,41 @@ class LuminaSpaCard extends LitElement {
       ha-card {
         background-size: cover;
         background-position: center;
-        background-repeat: no-repeat;
-        border-radius: 24px;
+        border-radius: 20px;
+        height: 500px; /* Hauteur fixe pour faciliter le placement */
+        position: relative;
         color: white;
         overflow: hidden;
-        position: relative;
-        min-height: 300px;
-        border: none;
-        display: block;
-      }
-      .overlay {
-        background: rgba(0, 0, 0, 0.3); /* Opacité ajustée pour mieux voir le fond */
-        padding: 20px;
-        min-height: 300px;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
       }
       .header {
+        position: absolute;
+        top: 20px;
+        left: 20px;
         font-weight: 800;
         font-size: 1.2em;
-        margin-bottom: 20px;
         letter-spacing: 2px;
-        text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
-      }
-      .main-container {
-        display: flex;
-        flex: 1;
-      }
-      .data-column {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-      .spa-column { 
-        flex: 1; 
+        text-transform: uppercase;
       }
       .glass-block {
+        position: absolute; /* Permet le placement libre */
         background: rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        width: fit-content;
-        min-width: 140px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border-radius: 12px;
+        padding: 10px 15px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        min-width: 100px;
       }
       .block-title {
-        font-size: 10px;
+        font-size: 9px;
         font-weight: 900;
-        color: rgba(255, 255, 255, 0.8);
-        margin-bottom: 6px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        color: rgba(0, 212, 255, 0.9);
+        margin-bottom: 4px;
       }
-      .row { 
-        display: flex; 
-        align-items: center; 
-        gap: 20px; 
-      }
-      .item { 
-        display: flex; 
-        align-items: center; 
-        gap: 8px; 
-      }
-      .val { 
-        font-size: 16px; 
-        font-weight: bold; 
-        font-family: 'Roboto', sans-serif;
-      }
-      ha-icon { 
-        --mdc-icon-size: 22px; 
-        color: #00d4ff; 
-      }
+      .row { display: flex; align-items: center; gap: 5px; }
+      .val { font-size: 15px; font-weight: bold; }
+      ha-icon { --mdc-icon-size: 18px; color: white; }
     `;
   }
 }
-
 customElements.define("lumina-spa-card", LuminaSpaCard);
