@@ -58,3 +58,9 @@ entity_vac_current: sensor.aspirateur_current
 switch_bubbles: switch.spa_bulles
 switch_filter: switch.spa_filtration
 switch_light: switch.spa_led
+
+## Licence
+
+Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+Copyright (c) 2026 **xez7082**
