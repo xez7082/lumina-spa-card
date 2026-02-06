@@ -5,7 +5,7 @@ import {
 } from "https://unpkg.com/lit-element@2.4.0/lit-element.js?module";
 
 /**
- * ÉDITEUR COMPLET ET CLAIR
+ * ÉDITEUR AVEC 14 ENTITÉS SYSTÈME
  */
 class SpaCardEditor extends LitElement {
   static get properties() { return { hass: {}, _config: {} }; }
@@ -28,40 +28,40 @@ class SpaCardEditor extends LitElement {
       { name: "background_image", label: "Image de fond (URL)", selector: { text: {} } },
       { name: "show_top_bar", label: "Afficher les 8 boutons du haut", selector: { boolean: {} } },
       
-      // Configuration des 8 boutons du haut
+      // 8 Boutons
       ...Array.from({length: 8}, (_, i) => [
         { name: `switch_${i+1}_entity`, label: `Bouton ${i+1} : Entité`, selector: { entity: {} } },
         { name: `switch_${i+1}_label`, label: `Bouton ${i+1} : Nom`, selector: { text: {} } }
       ]).flat(),
 
-      // Bloc Températures
+      // Températures
       { name: "title_temp", label: "Titre Bloc Température", selector: { text: {} } },
       { name: "entity_water_temp", label: "Capteur Eau", selector: { entity: {} } },
       { name: "entity_ambient_temp", label: "Capteur Air", selector: { entity: {} } },
-      { name: "pos_temp_x", label: "Temp Position X (%)", selector: { number: { min: 0, max: 100 } } },
-      { name: "pos_temp_y", label: "Temp Position Y (%)", selector: { number: { min: 0, max: 100 } } },
+      { name: "pos_temp_x", label: "Temp Pos X (%)", selector: { number: { min: 0, max: 100 } } },
+      { name: "pos_temp_y", label: "Temp Pos Y (%)", selector: { number: { min: 0, max: 100 } } },
 
-      // Bloc Chimie
+      // Chimie
       { name: "entity_ph", label: "Capteur pH", selector: { entity: {} } },
       { name: "entity_orp", label: "Capteur ORP", selector: { entity: {} } },
       { name: "entity_bromine", label: "Capteur Brome", selector: { entity: {} } },
       { name: "entity_alkalinity", label: "Capteur TAC", selector: { entity: {} } },
-      { name: "pos_chem_x", label: "Chimie Position X (%)", selector: { number: { min: 0, max: 100 } } },
-      { name: "pos_chem_y", label: "Chimie Position Y (%)", selector: { number: { min: 0, max: 100 } } },
+      { name: "pos_chem_x", label: "Chimie Pos X (%)", selector: { number: { min: 0, max: 100 } } },
+      { name: "pos_chem_y", label: "Chimie Pos Y (%)", selector: { number: { min: 0, max: 100 } } },
 
-      // Bloc Système / Énergie
-      { name: "entity_power", label: "Consommation (Watts)", selector: { entity: {} } },
-      { name: "entity_amp", label: "Intensité SPA (A)", selector: { entity: {} } },
-      { name: "entity_vac_current", label: "Intensité Aspirateur (A)", selector: { entity: {} } },
-      { name: "entity_tv", label: "État TV (Entité)", selector: { entity: {} } },
-      { name: "entity_alexa", label: "État Alexa (Entité)", selector: { entity: {} } },
-      { name: "pos_elec_x", label: "Système Position X (%)", selector: { number: { min: 0, max: 100 } } },
-      { name: "pos_elec_y", label: "Système Position Y (%)", selector: { number: { min: 0, max: 100 } } },
+      // SYSTÈME : LES 14 ENTITÉS
+      { name: "title_sys", label: "Titre Bloc Système", selector: { text: {} } },
+      ...Array.from({length: 14}, (_, i) => [
+        { name: `sys_entity_${i+1}`, label: `Système ${i+1} : Entité`, selector: { entity: {} } },
+        { name: `sys_label_${i+1}`, label: `Système ${i+1} : Nom (ex: Pompe)`, selector: { text: {} } }
+      ]).flat(),
+      { name: "pos_elec_x", label: "Système Pos X (%)", selector: { number: { min: 0, max: 100 } } },
+      { name: "pos_elec_y", label: "Système Pos Y (%)", selector: { number: { min: 0, max: 100 } } },
 
-      // Bloc Valeurs Idéales
+      // Idéal
       { name: "show_ideal_table", label: "Afficher Bloc IDÉAL", selector: { boolean: {} } },
-      { name: "pos_ideal_x", label: "Idéal Position X (%)", selector: { number: { min: 0, max: 100 } } },
-      { name: "pos_ideal_y", label: "Idéal Position Y (%)", selector: { number: { min: 0, max: 100 } } }
+      { name: "pos_ideal_x", label: "Idéal Pos X (%)", selector: { number: { min: 0, max: 100 } } },
+      { name: "pos_ideal_y", label: "Idéal Pos Y (%)", selector: { number: { min: 0, max: 100 } } }
     ];
 
     return html`<ha-form .hass=${this.hass} .data=${this._config} .schema=${schema} @value-changed=${this._valueChanged}></ha-form>`;
@@ -69,7 +69,7 @@ class SpaCardEditor extends LitElement {
 }
 
 /**
- * CARTE SPA ULTIME
+ * CARTE SPA AVEC GRILLE SYSTÈME 14 ENTITÉS
  */
 class SpaCard extends LitElement {
   static getConfigElement() { return document.createElement("spa-card-editor"); }
@@ -79,10 +79,12 @@ class SpaCard extends LitElement {
   _getState(entityId) {
     if (!this.hass || !entityId || !this.hass.states[entityId]) return { val: '?', unit: '', active: false };
     const s = this.hass.states[entityId];
+    const raw = s.state;
+    const isNumeric = !isNaN(parseFloat(raw)) && isFinite(raw);
     return {
-      val: !isNaN(s.state) ? parseFloat(s.state).toFixed(1) : s.state,
+      val: isNumeric ? parseFloat(raw).toFixed(1) : raw,
       unit: s.attributes.unit_of_measurement || '',
-      active: !['off', 'unavailable', 'unknown', 'standby'].includes(s.state.toLowerCase())
+      active: !['off', 'unavailable', 'unknown', 'standby', 'none'].includes(raw.toLowerCase())
     };
   }
 
@@ -90,7 +92,7 @@ class SpaCard extends LitElement {
     if (!this.hass || !this.config) return html``;
     const c = this.config;
 
-    // Rendu des 8 boutons du haut
+    // Boutons du haut
     const topButtons = [];
     for (let i = 1; i <= 8; i++) {
       const ent = c[`switch_${i}_entity`];
@@ -105,9 +107,24 @@ class SpaCard extends LitElement {
       }
     }
 
+    // Grille Système (14 entités)
+    const sysItems = [];
+    for (let i = 1; i <= 14; i++) {
+      const ent = c[`sys_entity_${i}`];
+      if (ent) {
+        const s = this._getState(ent);
+        sysItems.push(html`
+          <div class="sys-item">
+            <span class="sys-label">${c[`sys_label_${i}`] || 'E'+i}:</span>
+            <span class="sys-value ${s.active ? 'neon-text' : ''}">${s.val}${s.unit}</span>
+          </div>
+        `);
+      }
+    }
+
     return html`
       <ha-card style="background-image: url('${c.background_image || '/local/sparond2.jpg'}');">
-        <div class="glass-header">${c.card_title || 'MON SPA'}</div>
+        <div class="glass-header">${c.card_title || 'SPA DASHBOARD'}</div>
 
         ${c.show_top_bar !== false ? html`<div class="top-grid">${topButtons}</div>` : ''}
 
@@ -116,55 +133,56 @@ class SpaCard extends LitElement {
           <div class="box-row">Eau: ${this._getState(c.entity_water_temp).val}° | Air: ${this._getState(c.entity_ambient_temp).val}°</div>
         </div>
 
-        <div class="glass-box" style="left:${c.pos_chem_x || 5}%; top:${c.pos_chem_y || 40}%;">
+        <div class="glass-box" style="left:${c.pos_chem_x || 5}%; top:${c.pos_chem_y || 35}%;">
           <div class="box-title">CHIMIE</div>
           <div class="box-row">pH: ${this._getState(c.entity_ph).val} | ORP: ${this._getState(c.entity_orp).val}</div>
           <div class="box-row">Br: ${this._getState(c.entity_bromine).val} | TAC: ${this._getState(c.entity_alkalinity).val}</div>
         </div>
 
-        <div class="glass-box" style="left:${c.pos_elec_x || 5}%; top:${c.pos_elec_y || 58}%;">
-          <div class="box-title">SYSTÈME</div>
-          <div class="box-row">${this._getState(c.entity_power).val}W | ${this._getState(c.entity_amp).val}A</div>
-          <div class="box-row">
-             <ha-icon icon="mdi:television" class="${this._getState(c.entity_tv).active ? 'neon-text' : ''}"></ha-icon>
-             <ha-icon icon="mdi:google-assistant" class="${this._getState(c.entity_alexa).active ? 'neon-text' : ''}"></ha-icon>
-             <span>Aspi: ${this._getState(c.entity_vac_current).val}A</span>
+        <div class="glass-box sys-box" style="left:${c.pos_elec_x || 5}%; top:${c.pos_elec_y || 50}%;">
+          <div class="box-title">${c.title_sys || 'SYSTÈME'}</div>
+          <div class="sys-grid">
+            ${sysItems}
           </div>
         </div>
 
         ${c.show_ideal_table !== false ? html`
-        <div class="glass-box" style="left:${c.pos_ideal_x || 55}%; top:${c.pos_ideal_y || 40}%;">
-          <div class="box-title">VALEURS IDÉALES</div>
-          <div class="box-row-ideal"><span>pH</span> <span>7.2 - 7.6</span></div>
-          <div class="box-row-ideal"><span>Brome</span> <span>3.0 - 5.0</span></div>
-          <div class="box-row-ideal"><span>TAC</span> <span>80 - 120</span></div>
+        <div class="glass-box" style="left:${c.pos_ideal_x || 60}%; top:${c.pos_ideal_y || 50}%;">
+          <div class="box-title">IDÉAL</div>
+          <div class="box-row-ideal"><span>pH</span> <span>7.2-7.6</span></div>
+          <div class="box-row-ideal"><span>Brome</span> <span>3.0-5.0</span></div>
+          <div class="box-row-ideal"><span>TAC</span> <span>80-120</span></div>
         </div>` : ''}
       </ha-card>
     `;
   }
 
   static styles = css`
-    ha-card { height: 580px; background-size: cover; border: 3px solid #00f9f9; border-radius: 25px; position: relative; overflow: hidden; color: white; }
-    
-    .glass-header { position: absolute; top: 12px; left: 20px; font-weight: 900; color: #00f9f9; letter-spacing: 2px; text-transform: uppercase; }
+    ha-card { height: 650px; background-size: cover; border: 3px solid #00f9f9; border-radius: 25px; position: relative; overflow: hidden; color: white; }
+    .glass-header { position: absolute; top: 12px; left: 20px; font-weight: 900; color: #00f9f9; letter-spacing: 2px; }
     
     .top-grid { position: absolute; top: 45px; left: 10px; right: 10px; display: grid; grid-template-columns: repeat(8, 1fr); gap: 5px; }
-    .sw-item { background: rgba(0,0,0,0.7); border: 1px solid #00f9f9; border-radius: 8px; padding: 5px 2px; text-align: center; cursor: pointer; transition: 0.3s; }
+    .sw-item { background: rgba(0,0,0,0.7); border: 1px solid #00f9f9; border-radius: 8px; padding: 5px 2px; text-align: center; cursor: pointer; }
     .sw-item.active { background: rgba(0,249,249,0.4); box-shadow: 0 0 10px #00f9f9; }
-    .sw-text { font-size: 0.5em; font-weight: 900; text-transform: uppercase; margin-bottom: 2px; }
+    .sw-text { font-size: 0.5em; font-weight: 900; }
     
-    .glass-box { position: absolute; background: rgba(0,0,0,0.6); backdrop-filter: blur(15px); border: 1px solid #00f9f9; border-radius: 15px; padding: 12px; min-width: 175px; }
-    .box-title { color: #00f9f9; font-size: 0.6em; font-weight: 900; border-bottom: 1px solid rgba(0,249,249,0.3); margin-bottom: 6px; padding-bottom: 3px; }
-    .box-row { display: flex; align-items: center; gap: 8px; font-size: 0.85em; font-weight: bold; margin-bottom: 4px; }
+    .glass-box { position: absolute; background: rgba(0,0,0,0.65); backdrop-filter: blur(15px); border: 1px solid #00f9f9; border-radius: 15px; padding: 10px; min-width: 160px; }
+    .box-title { color: #00f9f9; font-size: 0.6em; font-weight: 900; border-bottom: 1px solid rgba(0,249,249,0.3); margin-bottom: 5px; }
+    .box-row { display: flex; gap: 8px; font-size: 0.8em; font-weight: bold; }
     
-    .box-row-ideal { display: flex; justify-content: space-between; font-size: 0.75em; font-weight: bold; color: #00ff88; margin-bottom: 3px; }
+    /* Grille spécifique pour les 14 entités */
+    .sys-box { min-width: 220px; }
+    .sys-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 10px; }
+    .sys-item { display: flex; justify-content: space-between; font-size: 0.7em; font-weight: bold; white-space: nowrap; }
+    .sys-label { color: #aaa; margin-right: 4px; }
     
-    .neon-text { color: #00f9f9; filter: drop-shadow(0 0 5px #00f9f9); }
-    ha-icon { --mdc-icon-size: 18px; }
+    .box-row-ideal { display: flex; justify-content: space-between; font-size: 0.7em; font-weight: bold; color: #00ff88; }
+    .neon-text { color: #00f9f9; text-shadow: 0 0 5px #00f9f9; }
+    ha-icon { --mdc-icon-size: 16px; }
   `;
 }
 
 customElements.define("spa-card-editor", SpaCardEditor);
 customElements.define("spa-card", SpaCard);
 window.customCards = window.customCards || [];
-window.customCards.push({ type: "spa-card", name: "SPA Ultimate Final", preview: true });
+window.customCards.push({ type: "spa-card", name: "SPA 14 Entities System", preview: true });
