@@ -113,7 +113,7 @@ class LuminaSpaEditor extends LitElement {
  * LA CARTE PRINCIPALE
  */
 class LuminaSpaCard extends LitElement {
-  static getConfigElement() { return document.createElement("lumina-spa-card-editor"); }
+  static getConfigElement() { return document.createElement("spa-card-editor"); }
   static get properties() { return { hass: {}, config: {} }; }
   setConfig(config) { this.config = config; }
 
