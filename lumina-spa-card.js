@@ -22,22 +22,31 @@ class LuminaSpaEditor extends LitElement {
     const schema = [
       { name: "card_title", label: "Nom du SPA", selector: { text: {} } },
       { name: "background_image", label: "Image (/local/sparond.png)", selector: { text: {} } },
-      // SECTION CAPTEURS
+      // TEMPERATURES
       { name: "entity_water_temp", label: "Température Eau", selector: { entity: { domain: "sensor" } } },
+      { name: "entity_ambient_temp", label: "Température Environnante", selector: { entity: { domain: "sensor" } } },
+      // ANALYSES CHIMIE
+      { name: "entity_ph", label: "Capteur pH", selector: { entity: { domain: "sensor" } } },
+      { name: "entity_orp", label: "Capteur ORP", selector: { entity: { domain: "sensor" } } },
+      { name: "entity_lsi", label: "Capteur LSI", selector: { entity: { domain: "sensor" } } },
+      { name: "entity_tds", label: "Capteur TDS/Sel", selector: { entity: { domain: "sensor" } } },
+      // ÉLECTRIQUE
       { name: "entity_power", label: "Puissance Totale (W)", selector: { entity: { domain: "sensor" } } },
       { name: "entity_amp", label: "Ampérage SPA (A)", selector: { entity: { domain: "sensor" } } },
       { name: "entity_current", label: "Intensité Courante (A)", selector: { entity: { domain: "sensor" } } },
       { name: "entity_vac_current", label: "Aspirateur Current (A)", selector: { entity: { domain: "sensor" } } },
-      // SECTION MULTIMEDIA / DOMOTIQUE
-      { name: "entity_tv", label: "Télévision", selector: { entity: { domain: ["media_player", "switch"] } } },
-      { name: "entity_alexa", label: "Alexa", selector: { entity: { domain: ["media_player", "switch"] } } },
-      // SWITCHS SPA
-      { name: "switch_bubbles", label: "Switch Bulles", selector: { entity: {} } },
-      { name: "switch_filter", label: "Switch Filtration", selector: { entity: {} } },
-      { name: "switch_light", label: "Switch Lumière", selector: { entity: {} } },
-      // POSITIONS (Slider X/Y pour chaque bloc)
-      { name: "pos_temp_x", label: "Temp X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
-      { name: "pos_temp_y", label: "Temp Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
+      // MULTIMEDIA
+      { name: "entity_tv", label: "Télévision", selector: { entity: {} } },
+      { name: "entity_alexa", label: "Alexa", selector: { entity: {} } },
+      // COMMANDES
+      { name: "switch_bubbles", label: "Bulles", selector: { entity: {} } },
+      { name: "switch_filter", label: "Filtration", selector: { entity: {} } },
+      { name: "switch_light", label: "Lumière", selector: { entity: {} } },
+      // POSITIONS
+      { name: "pos_temp_x", label: "Temps X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
+      { name: "pos_temp_y", label: "Temps Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
+      { name: "pos_chem_x", label: "Chimie X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
+      { name: "pos_chem_y", label: "Chimie Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
       { name: "pos_elec_x", label: "Élec X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
       { name: "pos_elec_y", label: "Élec Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
       { name: "pos_multi_x", label: "Multimedia X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
@@ -67,6 +76,11 @@ class LuminaSpaCard extends LitElement {
     const c = this.config;
 
     const water = this._get(c.entity_water_temp);
+    const ambient = this._get(c.entity_ambient_temp);
+    const ph = this._get(c.entity_ph);
+    const orp = this._get(c.entity_orp);
+    const lsi = this._get(c.entity_lsi);
+    const tds = this._get(c.entity_tds);
     const pwr = this._get(c.entity_power);
     const amp = this._get(c.entity_amp);
     const cur = this._get(c.entity_current);
@@ -79,28 +93,37 @@ class LuminaSpaCard extends LitElement {
 
     return html`
       <ha-card style="background-image: url('${c.background_image || '/local/sparond.png'}');">
-        <div class="header">${c.card_title || 'ULTIMATE SPA CONTROL'}</div>
+        <div class="header">${c.card_title || 'LUMINA HYPERION'}</div>
 
-        <div class="glass" style="left:${c.pos_temp_x || 10}%; top:${c.pos_temp_y || 15}%;">
-          <div class="titre">EAU</div>
-          <div class="row"><ha-icon icon="mdi:thermometer"></ha-icon> ${water.s}${water.u}</div>
+        <div class="glass" style="left:${c.pos_temp_x || 5}%; top:${c.pos_temp_y || 12}%;">
+          <div class="titre">TEMPÉRATURES</div>
+          <div class="row"><ha-icon icon="mdi:thermometer-water"></ha-icon> Eau: ${water.s}${water.u}</div>
+          <div class="row"><ha-icon icon="mdi:thermometer"></ha-icon> Env: ${ambient.s}${ambient.u}</div>
         </div>
 
-        <div class="glass" style="left:${c.pos_elec_x || 10}%; top:${c.pos_elec_y || 35}%;">
-          <div class="titre">ÉNERGIE & AMPÉRAGE</div>
+        <div class="glass" style="left:${c.pos_chem_x || 5}%; top:${c.pos_chem_y || 32}%;">
+          <div class="titre">ANALYSE EAU</div>
+          <div class="row"><ha-icon icon="mdi:ph"></ha-icon> pH: ${ph.s}</div>
+          <div class="row"><ha-icon icon="mdi:flask-outline"></ha-icon> ORP: ${orp.s}</div>
+          <div class="row"><ha-icon icon="mdi:water-check"></ha-icon> LSI: ${lsi.s} | TDS: ${tds.s}</div>
+        </div>
+
+        <div class="glass" style="left:${c.pos_elec_x || 5}%; top:${c.pos_elec_y || 55}%;">
+          <div class="titre">ÉNERGIE</div>
           <div class="row"><ha-icon icon="mdi:lightning-bolt"></ha-icon> ${pwr.s}W</div>
-          <div class="row"><ha-icon icon="mdi:current-ac"></ha-icon> Spa: ${amp.s}A</div>
-          <div class="row"><ha-icon icon="mdi:sine-wave"></ha-icon> Courant: ${cur.s}A</div>
-          <div class="row"><ha-icon icon="mdi:vacuum"></ha-icon> Aspi: ${vac.s}A</div>
+          <div class="row"><ha-icon icon="mdi:current-ac"></ha-icon> Spa: ${amp.s}A | Courant: ${cur.s}A</div>
+          <div class="row"><ha-icon icon="mdi:vacuum"></ha-icon> Aspirateur: ${vac.s}A</div>
         </div>
 
-        <div class="glass" style="left:${c.pos_multi_x || 10}%; top:${c.pos_multi_y || 65}%;">
+        <div class="glass" style="left:${c.pos_multi_x || 5}%; top:${c.pos_multi_y || 78}%;">
           <div class="titre">MULTIMEDIA</div>
-          <div class="row"><ha-icon icon="mdi:television" style="color:${tv.a ? '#00d4ff' : 'white'}"></ha-icon> TV: ${tv.s}</div>
-          <div class="row"><ha-icon icon="mdi:google-assistant" style="color:${alexa.a ? '#00d4ff' : 'white'}"></ha-icon> Alexa: ${alexa.s}</div>
+          <div class="row">
+            <ha-icon icon="mdi:television" style="color:${tv.a ? '#00d4ff' : 'white'}"></ha-icon> TV | 
+            <ha-icon icon="mdi:google-assistant" style="color:${alexa.a ? '#00d4ff' : 'white'}"></ha-icon> Alexa
+          </div>
         </div>
 
-        <div class="btns" style="left:${c.pos_btn_x || 60}%; top:${c.pos_btn_y || 80}%;">
+        <div class="btns" style="left:${c.pos_btn_x || 65}%; top:${c.pos_btn_y || 82}%;">
           <div class="btn ${bub.a ? 'on' : ''}" @click=${() => this.hass.callService("homeassistant", "toggle", {entity_id: c.switch_bubbles})}><ha-icon icon="mdi:airbubble"></ha-icon></div>
           <div class="btn ${fil.a ? 'on' : ''}" @click=${() => this.hass.callService("homeassistant", "toggle", {entity_id: c.switch_filter})}><ha-icon icon="mdi:hydro-power"></ha-icon></div>
           <div class="btn ${led.a ? 'on' : ''}" @click=${() => this.hass.callService("homeassistant", "toggle", {entity_id: c.switch_light})}><ha-icon icon="mdi:lightbulb"></ha-icon></div>
@@ -110,19 +133,19 @@ class LuminaSpaCard extends LitElement {
   }
 
   static styles = css`
-    ha-card { background-size: cover; background-position: center; height: 550px; position: relative; color: white; border-radius: 20px; overflow: hidden; border: none; }
-    .header { position: absolute; top: 20px; left: 20px; font-weight: bold; font-size: 1.2em; text-shadow: 2px 2px 4px black; z-index: 10; letter-spacing: 1px; }
-    .glass { position: absolute; background: rgba(0,0,0,0.55); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-radius: 12px; padding: 10px; border: 1px solid rgba(255,255,255,0.1); min-width: 120px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-    .titre { font-size: 0.5em; color: #00d4ff; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 4px; }
-    .row { display: flex; align-items: center; gap: 7px; font-size: 0.85em; font-weight: bold; margin-top: 3px; }
-    .btns { position: absolute; display: flex; gap: 10px; }
-    .btn { background: rgba(0,0,0,0.6); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); transition: 0.3s ease; }
-    .btn.on { background: #00d4ff; box-shadow: 0 0 20px #00d4ff; border: none; color: white; }
-    ha-icon { --mdc-icon-size: 19px; }
+    ha-card { background-size: cover; background-position: center; height: 600px; position: relative; color: white; border-radius: 25px; overflow: hidden; border: none; }
+    .header { position: absolute; top: 20px; left: 20px; font-weight: 900; font-size: 1.1em; text-shadow: 2px 2px 4px black; z-index: 10; letter-spacing: 2px; text-transform: uppercase; color: #00d4ff; }
+    .glass { position: absolute; background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 15px; padding: 12px; border: 1px solid rgba(255,255,255,0.1); min-width: 140px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+    .titre { font-size: 0.55em; color: #00d4ff; font-weight: 900; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; border-bottom: 1px solid rgba(0,212,255,0.3); padding-bottom: 2px; }
+    .row { display: flex; align-items: center; gap: 8px; font-size: 0.8em; font-weight: bold; margin-top: 4px; }
+    .btns { position: absolute; display: flex; gap: 12px; }
+    .btn { background: rgba(0,0,0,0.7); width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .btn.on { background: #00d4ff; box-shadow: 0 0 25px #00d4ff; border: none; color: white; transform: scale(1.1); }
+    ha-icon { --mdc-icon-size: 20px; }
   `;
 }
 
 customElements.define("lumina-spa-card-editor", LuminaSpaEditor);
 customElements.define("lumina-spa-card", LuminaSpaCard);
 window.customCards = window.customCards || [];
-window.customCards.push({ type: "lumina-spa-card", name: "Lumina SPA Ultimate", preview: true });
+window.customCards.push({ type: "lumina-spa-card", name: "Lumina SPA Hyperion", preview: true });
