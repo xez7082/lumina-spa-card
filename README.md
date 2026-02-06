@@ -1,16 +1,16 @@
-# 🛁 Lumina Spa Card
+# 🛁 Spa Card
 
 [![HACS](https://img.shields.io/badge/HACS-Default-blue.svg)](https://github.com/hacs/integration)
 ![Version](https://img.shields.io/github/v/release/xez7082/lumina-spa-card?include_prereleases)
 ![License](https://img.shields.io/github/license/xez7082/lumina-spa-card)
 
-**Lumina Spa Card** est une carte Lovelace premium pour Home Assistant, conçue pour transformer le monitoring de votre spa en une interface futuriste et intuitive. Surveillez la température, la chimie de l'eau et pilotez vos équipements avec style.
+**Spa Card** est une carte Lovelace premium pour Home Assistant, conçue pour transformer le monitoring de votre spa en une interface futuriste et intuitive. Surveillez la température, la chimie de l'eau et pilotez vos équipements avec style.
 
 ---
 
 ## 🖼️ Aperçu
 
-![Lumina Spa Preview](https://raw.githubusercontent.com/xez7082/lumina-spa-card/main/sparond2.png)
+![Spa Preview](https://raw.githubusercontent.com/xez7082/lumina-spa-card/main/sparond2.png)
 
 ---
 
@@ -31,7 +31,7 @@
 
 ### Via HACS (Recommandé)
 1. Ouvrez **HACS** → **Frontend** → **Menu (⋮)** → **Dépôts personnalisés**.
-2. Ajoutez l'URL de ce dépôt : `https://github.com/xez7082/lumina-spa-card`.
+2. Ajoutez l'URL de ce dépôt : `https://github.com/xez7082/spa-card`.
 3. Sélectionnez le type **Lovelace**.
 4. Cliquez sur **Installer**.
 5. Rafraîchissez votre navigateur (**Ctrl + F5**).
@@ -44,7 +44,7 @@ La carte dispose d'un **éditeur visuel complet** (UI) intégré à Home Assista
 
 ### Exemple de configuration YAML
 ```yaml
-type: custom:lumina-spa-card
+type: custom:spa-card
 card_title: "Mon Spa"
 background_image: "/local/sparond2.jpg"
 entity_water_temp: sensor.spa_water_temperature
