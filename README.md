@@ -10,7 +10,7 @@
 
 ## 🖼️ Aperçu
 
-![Lumina Spa Preview](sparond2.jpg)
+![Lumina Spa Preview](sparond2.png)
 
 ---
 
