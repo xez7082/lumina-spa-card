@@ -1,104 +1,155 @@
-const LitElement = window.LitElement || Object.getPrototypeOf(customElements.get("ha-panel-lovelace"));
-const html = LitElement.prototype.html || window.html;
-const css = LitElement.prototype.css || window.css;
+import {
+  LitElement,
+  html,
+  css
+} from "https://unpkg.com/lit-element@2.4.0/lit-element.js?module";
 
 class LuminaSpaCard extends LitElement {
-
-  static properties = {
-    hass: {},
-    config: {}
-  };
-
-  setConfig(config) {
-    if (!config.entity) {
-      throw new Error("Vous devez définir au moins l'entité de température pour Lumina SPA !");
-    }
-    this.config = config;
+  
+  static get properties() {
+    return {
+      hass: { type: Object },
+      config: { type: Object }
+    };
   }
 
-  static styles = css`
-    .spa-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-family: var(--ha-card-font-family, sans-serif);
-    }
-    .temp {
-      font-size: 2em;
-      margin: 8px 0;
-    }
-    .status {
-      margin: 4px 0;
-      font-weight: bold;
-    }
-    .controls {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .button {
-      padding: 6px 12px;
-      background-color: var(--primary-color, #03a9f4);
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      min-width: 120px;
-    }
-    .button:disabled {
-      background-color: #aaa;
-      cursor: not-allowed;
-    }
-  `;
+  setConfig(config) {
+    this.config = {
+      card_title: 'MON SPA',
+      background_image: '/local/preview.png',
+      ...config
+    };
+  }
+
+  // Utilitaire pour récupérer l'état réel de HA
+  _getDisplayState(entityId) {
+    if (!this.hass || !this.hass.states[entityId]) return { state: '--', unit: '' };
+    const stateObj = this.hass.states[entityId];
+    return {
+      state: stateObj.state,
+      unit: stateObj.attributes.unit_of_measurement || ''
+    };
+  }
 
   render() {
     if (!this.hass || !this.config) return html``;
 
-    const tempEntity = this.hass.states[this.config.entity];
-    const heating = this.hass.states[this.config.heating_entity];
-    const jets = this.hass.states[this.config.jets_entity];
-    const bubbles = this.hass.states[this.config.bubbles_entity];
-
-    const temperature = tempEntity ? tempEntity.state : "N/A";
-    const isHeating = heating ? heating.state === "on" : false;
-    const jetsOn = jets ? jets.state === "on" : false;
-    const bubblesOn = bubbles ? bubbles.state === "on" : false;
+    const water = this._getDisplayState(this.config.entity_water_temp);
+    const air = this._getDisplayState(this.config.entity_air_temp);
+    const ph = this._getDisplayState(this.config.entity_ph);
+    const orp = this._getDisplayState(this.config.entity_orp);
+    const power = this._getDisplayState(this.config.entity_power);
 
     return html`
-      <ha-card header="${this.config.card_title || "SPA"}">
-        <div class="spa-card">
-          <div class="temp">${temperature}°C</div>
-          <div class="status">
-            Chauffage: ${isHeating ? "ON" : "OFF"} | 
-            Jets: ${jetsOn ? "ON" : "OFF"} | 
-            Bulles: ${bubblesOn ? "ON" : "OFF"}
-          </div>
-          <div class="controls">
-            ${heating ? html`
-              <button class="button" @click="${() => this.toggleSwitch(this.config.heating_entity)}">
-                ${isHeating ? "Éteindre Chauffage" : "Allumer Chauffage"}
-              </button>
-            ` : ""}
-            ${jets ? html`
-              <button class="button" @click="${() => this.toggleSwitch(this.config.jets_entity)}">
-                ${jetsOn ? "Éteindre Jets" : "Allumer Jets"}
-              </button>
-            ` : ""}
-            ${bubbles ? html`
-              <button class="button" @click="${() => this.toggleSwitch(this.config.bubbles_entity)}">
-                ${bubblesOn ? "Éteindre Bulles" : "Allumer Bulles"}
-              </button>
-            ` : ""}
+      <ha-card style="background-image: url('${this.config.background_image}')">
+        <div class="overlay">
+          <div class="header">${this.config.card_title}</div>
+          
+          <div class="main-container">
+            <div class="data-column">
+              
+              <div class="glass-block">
+                <div class="block-title">TEMPÉRATURE</div>
+                <div class="row">
+                  <div class="item">
+                    <ha-icon icon="mdi:thermometer"></ha-icon>
+                    <div class="info"><span class="val">${water.state}${water.unit}</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass-block">
+                <div class="block-title">CHIMIE SPA</div>
+                <div class="row">
+                  <div class="item">
+                    <ha-icon icon="mdi:ph"></ha-icon>
+                    <div class="info"><span class="val">${ph.state}</span></div>
+                  </div>
+                  <div class="item">
+                    <ha-icon icon="mdi:test-tube"></ha-icon>
+                    <div class="info"><span class="val">${orp.state} ${orp.unit || 'mV'}</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="glass-block">
+                <div class="block-title">ÉNERGIE</div>
+                <div class="row">
+                  <div class="item">
+                    <ha-icon icon="mdi:lightning-bolt"></ha-icon>
+                    <div class="info"><span class="val">${power.state}${power.unit}</span></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            
+            <div class="spa-column">
+              </div>
           </div>
         </div>
       </ha-card>
     `;
   }
 
-  toggleSwitch(entityId) {
-    this.hass.callService("switch", "toggle", { entity_id: entityId });
+  static get styles() {
+    return css`
+      ha-card {
+        background-size: cover;
+        background-position: center;
+        border-radius: 24px;
+        color: white;
+        overflow: hidden;
+        position: relative;
+        min-height: 280px;
+        border: none;
+      }
+      .overlay {
+        background: rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      .header {
+        font-weight: 800;
+        font-size: 1.1em;
+        margin-bottom: 15px;
+        letter-spacing: 2px;
+      }
+      .main-container {
+        display: flex;
+        height: 100%;
+      }
+      .data-column {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .spa-column { flex: 1; }
+      .glass-block {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border-radius: 12px;
+        padding: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        width: fit-content;
+        min-width: 120px;
+      }
+      .block-title {
+        font-size: 9px;
+        font-weight: 900;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 4px;
+        text-transform: uppercase;
+      }
+      .row { display: flex; align-items: center; gap: 15px; }
+      .item { display: flex; align-items: center; gap: 8px; }
+      .val { font-size: 14px; font-weight: bold; }
+      ha-icon { --mdc-icon-size: 18px; color: #00d4ff; }
+    `;
   }
 }
 
