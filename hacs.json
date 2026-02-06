@@ -1,7 +1,6 @@
 {
   "name": "Lumina Spa Card",
-  "content_in_root": true,
+  "content_in_root": false,
   "render_readme": true,
   "filename": "lumina-spa-card.js",
-  "homeassistant": "2023.8.0"
 }
