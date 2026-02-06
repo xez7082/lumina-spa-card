@@ -4,12 +4,8 @@ import {
   css
 } from "https://unpkg.com/lit-element@2.4.0/lit-element.js?module";
 
-/**
- * ÉDITEUR DE LA CARTE (INTERFACE DE CONFIGURATION)
- */
 class LuminaSpaEditor extends LitElement {
   static get properties() { return { hass: {}, _config: {} }; }
-  
   setConfig(config) { this._config = config; }
 
   _valueChanged(ev) {
@@ -33,60 +29,78 @@ class LuminaSpaEditor extends LitElement {
           { name: "show_table", label: "Afficher Tableau", selector: { boolean: {} } },
         ]
       },
-      // ACCORDÉONS ENTITÉS
-      { title: "🌡️ Températures", type: "expandable", schema: [
+      // ONGLET : TEMPÉRATURES + POSITION
+      {
+        title: "🌡️ Températures",
+        type: "expandable",
+        schema: [
           { name: "entity_water_temp", label: "Entité Temp Eau", selector: { entity: {} } },
           { name: "entity_ambient_temp", label: "Entité Temp Env", selector: { entity: {} } },
-      ]},
-      { title: "🧪 Chimie de l'eau", type: "expandable", schema: [
+          { label: "Positionnement du bloc (%)", type: "constant" },
+          { name: "", type: "grid", schema: [
+            { name: "pos_temp_x", label: "Horizontal (X)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+            { name: "pos_temp_y", label: "Vertical (Y)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+          ]}
+        ]
+      },
+      // ONGLET : CHIMIE + POSITION
+      {
+        title: "🧪 Chimie de l'eau",
+        type: "expandable",
+        schema: [
           { name: "entity_ph", label: "Entité pH", selector: { entity: {} } },
           { name: "entity_orp", label: "Entité ORP", selector: { entity: {} } },
           { name: "entity_bromine", label: "Entité Brome", selector: { entity: {} } },
           { name: "entity_alkalinity", label: "Entité Alcalinité", selector: { entity: {} } },
-      ]},
-      { title: "⚡ Système & Énergie", type: "expandable", schema: [
+          { label: "Positionnement du bloc (%)", type: "constant" },
+          { name: "", type: "grid", schema: [
+            { name: "pos_chem_x", label: "Horizontal (X)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+            { name: "pos_chem_y", label: "Vertical (Y)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+          ]}
+        ]
+      },
+      // ONGLET : SYSTÈME + POSITION
+      {
+        title: "⚡ Système & Énergie",
+        type: "expandable",
+        schema: [
           { name: "entity_power", label: "Entité Watts", selector: { entity: {} } },
           { name: "entity_amp", label: "Entité Amp SPA", selector: { entity: {} } },
           { name: "entity_vac_current", label: "Entité Amp Aspirateur", selector: { entity: {} } },
           { name: "entity_tv", label: "Entité TV", selector: { entity: {} } },
           { name: "entity_alexa", label: "Entité Alexa", selector: { entity: {} } },
-      ]},
-      { title: "🔘 Commandes (Interrupteurs)", type: "expandable", schema: [
+          { label: "Positionnement du bloc (%)", type: "constant" },
+          { name: "", type: "grid", schema: [
+            { name: "pos_elec_x", label: "Horizontal (X)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+            { name: "pos_elec_y", label: "Vertical (Y)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+          ]}
+        ]
+      },
+      // ONGLET : TABLEAU IDÉAL + POSITION
+      {
+        title: "📊 Tableau AquaChek",
+        type: "expandable",
+        schema: [
+          { label: "Positionnement du tableau (%)", type: "constant" },
+          { name: "", type: "grid", schema: [
+            { name: "pos_tab_x", label: "Horizontal (X)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+            { name: "pos_tab_y", label: "Vertical (Y)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+          ]}
+        ]
+      },
+      // ONGLET : COMMANDES + POSITION
+      {
+        title: "🔘 Boutons Commandes",
+        type: "expandable",
+        schema: [
           { name: "switch_bubbles", label: "Switch Bulles", selector: { entity: {} } },
           { name: "switch_filter", label: "Switch Filtre", selector: { entity: {} } },
           { name: "switch_light", label: "Switch Lumière", selector: { entity: {} } },
-      ]},
-
-      // ACCORDÉON POSITIONS (FORCAGE DES TITRES)
-      {
-        title: "📍 Réglages Positions (X/Y %)",
-        type: "expandable",
-        schema: [
-          { label: "Position : Températures", type: "constant" },
+          { label: "Positionnement des boutons (%)", type: "constant" },
           { name: "", type: "grid", schema: [
-              { name: "pos_temp_x", label: "X %", selector: { number: { min: 0, max: 100, mode: "box" } } },
-              { name: "pos_temp_y", label: "Y %", selector: { number: { min: 0, max: 100, mode: "box" } } },
-          ]},
-          { label: "Position : Chimie", type: "constant" },
-          { name: "", type: "grid", schema: [
-              { name: "pos_chem_x", label: "X %", selector: { number: { min: 0, max: 100, mode: "box" } } },
-              { name: "pos_chem_y", label: "Y %", selector: { number: { min: 0, max: 100, mode: "box" } } },
-          ]},
-          { label: "Position : Système", type: "constant" },
-          { name: "", type: "grid", schema: [
-              { name: "pos_elec_x", label: "X %", selector: { number: { min: 0, max: 100, mode: "box" } } },
-              { name: "pos_elec_y", label: "Y %", selector: { number: { min: 0, max: 100, mode: "box" } } },
-          ]},
-          { label: "Position : Tableau Idéal", type: "constant" },
-          { name: "", type: "grid", schema: [
-              { name: "pos_tab_x", label: "X %", selector: { number: { min: 0, max: 100, mode: "box" } } },
-              { name: "pos_tab_y", label: "Y %", selector: { number: { min: 0, max: 100, mode: "box" } } },
-          ]},
-          { label: "Position : Boutons", type: "constant" },
-          { name: "", type: "grid", schema: [
-              { name: "pos_btn_x", label: "X %", selector: { number: { min: 0, max: 100, mode: "box" } } },
-              { name: "pos_btn_y", label: "Y %", selector: { number: { min: 0, max: 100, mode: "box" } } },
-          ]},
+            { name: "pos_btn_x", label: "Horizontal (X)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+            { name: "pos_btn_y", label: "Vertical (Y)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+          ]}
         ]
       }
     ];
@@ -101,7 +115,6 @@ class LuminaSpaEditor extends LitElement {
 class LuminaSpaCard extends LitElement {
   static getConfigElement() { return document.createElement("lumina-spa-card-editor"); }
   static get properties() { return { hass: {}, config: {} }; }
-
   setConfig(config) { this.config = config; }
 
   _getState(entityId) {
