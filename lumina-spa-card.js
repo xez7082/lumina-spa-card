@@ -5,7 +5,7 @@ import {
 } from "https://unpkg.com/lit-element@2.4.0/lit-element.js?module";
 
 /**
- * ÉDITEUR DE LA CARTE (INTERFACE DE CONFIGURATION)
+ * ÉDITEUR DE LA CARTE (INTERFACE DE CONFIGURATION AVEC ACCORDÉONS)
  */
 class LuminaSpaEditor extends LitElement {
   static get properties() { return { hass: {}, _config: {} }; }
@@ -33,25 +33,31 @@ class LuminaSpaEditor extends LitElement {
           { name: "show_table", label: "Afficher Tableau", selector: { boolean: {} } },
         ]
       },
-      // MENU DÉROULANT : TEMPÉRATURES
+      // SECTION TEMPÉRATURES
       {
-        name: "temp_section", label: "🌡️ Températures", type: "expandable", schema: [
+        title: "🌡️ Températures",
+        type: "expandable",
+        schema: [
           { name: "entity_water_temp", label: "Entité Temp Eau", selector: { entity: {} } },
           { name: "entity_ambient_temp", label: "Entité Temp Env", selector: { entity: {} } },
         ]
       },
-      // MENU DÉROULANT : CHIMIE
+      // SECTION CHIMIE
       {
-        name: "chem_section", label: "🧪 Chimie de l'eau", type: "expandable", schema: [
+        title: "🧪 Chimie de l'eau",
+        type: "expandable",
+        schema: [
           { name: "entity_ph", label: "Entité pH", selector: { entity: {} } },
           { name: "entity_orp", label: "Entité ORP", selector: { entity: {} } },
           { name: "entity_bromine", label: "Entité Brome", selector: { entity: {} } },
           { name: "entity_alkalinity", label: "Entité Alcalinité", selector: { entity: {} } },
         ]
       },
-      // MENU DÉROULANT : SYSTÈME
+      // SECTION SYSTÈME
       {
-        name: "sys_section", label: "⚡ Système & Énergie", type: "expandable", schema: [
+        title: "⚡ Système & Énergie",
+        type: "expandable",
+        schema: [
           { name: "entity_power", label: "Entité Watts", selector: { entity: {} } },
           { name: "entity_amp", label: "Entité Amp SPA", selector: { entity: {} } },
           { name: "entity_vac_current", label: "Entité Amp Aspirateur", selector: { entity: {} } },
@@ -59,17 +65,21 @@ class LuminaSpaEditor extends LitElement {
           { name: "entity_alexa", label: "Entité Alexa", selector: { entity: {} } },
         ]
       },
-      // MENU DÉROULANT : COMMANDES
+      // SECTION COMMANDES
       {
-        name: "switch_section", label: "🔘 Commandes (Interrupteurs)", type: "expandable", schema: [
+        title: "🔘 Commandes (Interrupteurs)",
+        type: "expandable",
+        schema: [
           { name: "switch_bubbles", label: "Switch Bulles", selector: { entity: {} } },
           { name: "switch_filter", label: "Switch Filtre", selector: { entity: {} } },
           { name: "switch_light", label: "Switch Lumière", selector: { entity: {} } },
         ]
       },
-      // MENU DÉROULANT : POSITIONS
+      // SECTION POSITIONS
       {
-        name: "pos_section", label: "📍 Réglages Positions (X/Y %)", type: "expandable", schema: [
+        title: "📍 Réglages Positions (X/Y %)",
+        type: "expandable",
+        schema: [
           {
             name: "", type: "grid", schema: [
               { name: "pos_temp_x", label: "Temp X", selector: { number: { min: 0, max: 100, mode: "box" } } },
@@ -88,19 +98,12 @@ class LuminaSpaEditor extends LitElement {
       }
     ];
 
-    return html`
-      <ha-form
-        .hass=${this.hass}
-        .data=${this._config}
-        .schema=${schema}
-        @value-changed=${this._valueChanged}
-      ></ha-form>
-    `;
+    return html`<ha-form .hass=${this.hass} .data=${this._config} .schema=${schema} @value-changed=${this._valueChanged}></ha-form>`;
   }
 }
 
 /**
- * LA CARTE (LOGIQUE ET AFFICHAGE)
+ * LA CARTE PRINCIPALE
  */
 class LuminaSpaCard extends LitElement {
   static getConfigElement() { return document.createElement("lumina-spa-card-editor"); }
@@ -126,7 +129,6 @@ class LuminaSpaCard extends LitElement {
     if (!this.hass || !this.config) return html``;
     const c = this.config;
 
-    // Récupération des états
     const water = this._getState(c.entity_water_temp);
     const ambient = this._getState(c.entity_ambient_temp);
     const ph = this._getState(c.entity_ph);
@@ -205,15 +207,7 @@ class LuminaSpaCard extends LitElement {
   `;
 }
 
-// Enregistrement des éléments
 customElements.define("lumina-spa-card-editor", LuminaSpaEditor);
 customElements.define("lumina-spa-card", LuminaSpaCard);
-
-// Ajout à la liste des cartes personnalisées de HA
 window.customCards = window.customCards || [];
-window.customCards.push({
-  type: "lumina-spa-card",
-  name: "Lumina SPA Final",
-  description: "Carte premium avec éditeur accordéon et monitoring complet.",
-  preview: true
-});
+window.customCards.push({ type: "lumina-spa-card", name: "Lumina SPA Final", preview: true });
