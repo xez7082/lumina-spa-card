@@ -19,8 +19,6 @@ class LuminaSpaEditor extends LitElement {
 
   render() {
     if (!this.hass || !this._config) return html``;
-
-    // SCHEMA TOTALEMENT PLAT (ANTI-BUG)
     const schema = [
       { name: "card_title", label: "Nom du SPA", selector: { text: {} } },
       { name: "background_image", label: "Image (/local/sparond.png)", selector: { text: {} } },
@@ -33,18 +31,17 @@ class LuminaSpaEditor extends LitElement {
       { name: "switch_bubbles", label: "Switch Bulles", selector: { entity: {} } },
       { name: "switch_filter", label: "Switch Filtration", selector: { entity: {} } },
       { name: "switch_light", label: "Switch Lumière", selector: { entity: {} } },
-      { name: "pos_temp_x", label: "Position Temp X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
-      { name: "pos_temp_y", label: "Position Temp Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
-      { name: "pos_chem_x", label: "Position pH/ORP X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
-      { name: "pos_chem_y", label: "Position pH/ORP Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
-      { name: "pos_anal_x", label: "Position Santé X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
-      { name: "pos_anal_y", label: "Position Santé Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
-      { name: "pos_energy_x", label: "Position NRJ X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
-      { name: "pos_energy_y", label: "Position NRJ Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
-      { name: "pos_btn_x", label: "Position Boutons X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
-      { name: "pos_btn_y", label: "Position Boutons Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
+      { name: "pos_temp_x", label: "Temp X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
+      { name: "pos_temp_y", label: "Temp Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
+      { name: "pos_chem_x", label: "pH/ORP X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
+      { name: "pos_chem_y", label: "pH/ORP Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
+      { name: "pos_anal_x", label: "Santé X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
+      { name: "pos_anal_y", label: "Santé Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
+      { name: "pos_energy_x", label: "NRJ X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
+      { name: "pos_energy_y", label: "NRJ Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
+      { name: "pos_btn_x", label: "Boutons X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
+      { name: "pos_btn_y", label: "Boutons Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
     ];
-
     return html`<ha-form .hass=${this.hass} .data=${this._config} .schema=${schema} @value-changed=${this._valueChanged}></ha-form>`;
   }
 }
@@ -52,16 +49,15 @@ class LuminaSpaEditor extends LitElement {
 class LuminaSpaCard extends LitElement {
   static getConfigElement() { return document.createElement("lumina-spa-card-editor"); }
   static get properties() { return { hass: {}, config: {} }; }
+  setConfig(config) { this.config = config; }
 
-  setConfig(config) { 
-    this.config = config; 
-  }
-
-  // Force l'affichage même si l'entité n'existe pas
   _get(ent) {
-    if (!this.hass || !ent || !this.hass.states[ent]) return { s: '0', u: '', a: false };
+    if (!this.hass || !ent || !this.hass.states[ent]) return { s: '?', u: '', a: false };
     const o = this.hass.states[ent];
-    return { s: o.state, u: o.attributes.unit_of_measurement || '', a: o.state === 'on' };
+    const val = o.state;
+    // On nettoie la valeur pour n'avoir que 1 chiffre après la virgule si c'est un nombre
+    const display = (!isNaN(parseFloat(val))) ? parseFloat(val).toFixed(1) : val;
+    return { s: display, u: o.attributes.unit_of_measurement || '', a: val === 'on' };
   }
 
   render() {
@@ -89,19 +85,19 @@ class LuminaSpaCard extends LitElement {
 
         <div class="glass" style="left:${c.pos_chem_x || 10}%; top:${c.pos_chem_y || 35}%;">
           <div class="titre">CHIMIE</div>
-          <div class="row"><ha-icon icon="mdi:ph"></ha-icon> ${ph.s}</div>
-          <div class="row"><ha-icon icon="mdi:test-tube"></ha-icon> ${orp.s}</div>
+          <div class="row"><ha-icon icon="mdi:ph"></ha-icon> pH: ${ph.s}</div>
+          <div class="row"><ha-icon icon="mdi:flask-outline"></ha-icon> ORP: ${orp.s}${orp.u}</div>
         </div>
 
         <div class="glass" style="left:${c.pos_anal_x || 10}%; top:${c.pos_anal_y || 58}%;">
           <div class="titre">SANTÉ</div>
-          <div class="row"><ha-icon icon="mdi:waves"></ha-icon> LSI: ${lsi.s}</div>
-          <div class="row"><ha-icon icon="mdi:opacity"></ha-icon> TDS: ${tds.s}</div>
+          <div class="row"><ha-icon icon="mdi:water-check"></ha-icon> LSI: ${lsi.s}</div>
+          <div class="row"><ha-icon icon="mdi:shaker-outline"></ha-icon> TDS: ${tds.s}</div>
         </div>
 
         <div class="glass" style="left:${c.pos_energy_x || 10}%; top:${c.pos_energy_y || 80}%;">
           <div class="titre">ÉNERGIE</div>
-          <div class="row"><ha-icon icon="mdi:lightning-bolt"></ha-icon>${pwr.s}${pwr.u}</div>
+          <div class="row"><ha-icon icon="mdi:lightning-bolt"></ha-icon> ${pwr.s}${pwr.u}</div>
         </div>
 
         <div class="btns" style="left:${c.pos_btn_x || 60}%; top:${c.pos_btn_y || 80}%;">
@@ -116,10 +112,10 @@ class LuminaSpaCard extends LitElement {
   static styles = css`
     ha-card { background-size: cover; background-position: center; height: 500px; position: relative; color: white; border-radius: 20px; overflow: hidden; border: none; }
     .header { position: absolute; top: 20px; left: 20px; font-weight: bold; font-size: 1.4em; text-shadow: 2px 2px 4px black; z-index: 10; }
-    .glass { position: absolute; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 10px; padding: 8px; border: 1px solid rgba(255,255,255,0.1); min-width: 90px; transition: all 0.1s ease-out; }
+    .glass { position: absolute; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-radius: 10px; padding: 8px; border: 1px solid rgba(255,255,255,0.1); min-width: 100px; }
     .titre { font-size: 0.55em; color: #00d4ff; font-weight: bold; letter-spacing: 1px; }
     .row { display: flex; align-items: center; gap: 5px; font-size: 0.85em; font-weight: bold; margin-top: 3px; }
-    .btns { position: absolute; display: flex; gap: 8px; transition: all 0.1s ease-out; }
+    .btns { position: absolute; display: flex; gap: 8px; }
     .btn { background: rgba(0,0,0,0.6); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.3); }
     .btn.on { background: #00d4ff; box-shadow: 0 0 15px #00d4ff; border: none; }
     ha-icon { --mdc-icon-size: 18px; }
