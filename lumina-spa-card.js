@@ -213,7 +213,7 @@ class LuminaSpaCard extends LitElement {
   `;
 }
 
-customElements.define("lumina-spa-card-editor", LuminaSpaEditor);
-customElements.define("lumina-spa-card", LuminaSpaCard);
+customElements.define("spa-card-editor", SpaEditor);
+customElements.define("spa-card", SpaCard);
 window.customCards = window.customCards || [];
-window.customCards.push({ type: "lumina-spa-card", name: "Lumina SPA Final", preview: true });
+window.customCards.push({ type: "spa-card", name: "SPA Final", preview: true });
