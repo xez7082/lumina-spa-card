@@ -5,7 +5,7 @@ import {
 } from "https://unpkg.com/lit-element@2.4.0/lit-element.js?module";
 
 /**
- * ÉDITEUR DE LA CARTE - INTERFACE DE CONFIGURATION ULTRA-CLAIR
+ * ÉDITEUR DE LA CARTE - INTERFACE DE CONFIGURATION CORRIGÉE
  */
 class SpaCardEditor extends LitElement {
   static get properties() { return { hass: {}, _config: {} }; }
@@ -23,104 +23,93 @@ class SpaCardEditor extends LitElement {
   render() {
     if (!this.hass || !this._config) return html``;
     
-    // Génération des labels pour les 8 boutons
+    // Génération du schéma pour les 8 boutons
     const switchSchema = [];
     for (let i = 1; i <= 8; i++) {
       switchSchema.push({
         name: `switch_${i}_entity`, 
-        label: `BOUTON ${i} : Entité (Appareil)`, 
+        label: `BOUTON ${i} (Entité)`, 
         selector: { entity: { domain: ["switch", "light", "input_boolean"] } } 
       });
       switchSchema.push({
         name: `switch_${i}_label`, 
-        label: `BOUTON ${i} : Texte affiché (ex: P1)`, 
+        label: `BOUTON ${i} (Nom court)`, 
         selector: { text: {} } 
       });
     }
 
     const schema = [
-      { name: "card_title", label: "TITRE DE LA CARTE (ex: SPA MONACO)", selector: { text: {} } },
-      { name: "background_image", label: "IMAGE DE FOND (Lien URL ou /local/spa.jpg)", selector: { text: {} } },
+      { name: "card_title", label: "Titre principal de la carte", selector: { text: {} } },
+      { name: "background_image", label: "URL de l'image de fond", selector: { text: {} } },
       
       {
-        title: "🕹️ CONFIGURATION DES 8 BOUTONS SUPÉRIEURS",
+        title: "🕹️ BARRE DES 8 BOUTONS (HAUT)",
+        name: "top_bar_settings",
         type: "expandable",
         schema: [
-          { name: "show_top_bar", label: "Afficher la barre des 8 boutons ?", selector: { boolean: {} } },
+          { name: "show_top_bar", label: "Activer la barre ?", selector: { boolean: {} } },
           ...switchSchema
         ]
       },
       
       {
         title: "🌡️ BLOC TEMPÉRATURES",
+        name: "temp_settings",
         type: "expandable",
         schema: [
-          { name: "title_temp", label: "Titre du bloc Température", selector: { text: {} } },
-          { name: "entity_water_temp", label: "Capteur : Température de l'EAU", selector: { entity: {} } },
-          { name: "entity_ambient_temp", label: "Capteur : Température de l'AIR", selector: { entity: {} } },
-          {
-            name: "", type: "grid", schema: [
-              { name: "pos_temp_x", label: "Position X (Gauche/Droite %)", selector: { number: { min: 0, max: 100 } } },
-              { name: "pos_temp_y", label: "Position Y (Haut/Bas %)", selector: { number: { min: 0, max: 100 } } },
-            ]
-          }
+          { name: "title_temp", label: "Nom du bloc (ex: TEMPÉRATURES)", selector: { text: {} } },
+          { name: "entity_water_temp", label: "Sonde de l'EAU", selector: { entity: {} } },
+          { name: "entity_ambient_temp", label: "Sonde de l'AIR", selector: { entity: {} } },
+          { name: "pos_temp_x", label: "Position Horizontale (0-100%)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+          { name: "pos_temp_y", label: "Position Verticale (0-100%)", selector: { number: { min: 0, max: 100, mode: "box" } } }
         ]
       },
 
       {
-        title: "🧪 BLOC CHIMIE DE L'EAU",
+        title: "🧪 BLOC CHIMIE",
+        name: "chem_settings",
         type: "expandable",
         schema: [
-          { name: "title_chem", label: "Titre du bloc Chimie", selector: { text: {} } },
-          { name: "entity_ph", label: "Capteur : Valeur du pH", selector: { entity: {} } },
-          { name: "entity_orp", label: "Capteur : Valeur ORP (Redox)", selector: { entity: {} } },
-          { name: "entity_bromine", label: "Capteur : Valeur du Brome", selector: { entity: {} } },
-          { name: "entity_alkalinity", label: "Capteur : Valeur TAC (Alcalinité)", selector: { entity: {} } },
-          {
-            name: "", type: "grid", schema: [
-              { name: "pos_chem_x", label: "Position X (%)", selector: { number: { min: 0, max: 100 } } },
-              { name: "pos_chem_y", label: "Position Y (%)", selector: { number: { min: 0, max: 100 } } },
-            ]
-          }
+          { name: "title_chem", label: "Nom du bloc (ex: CHIMIE)", selector: { text: {} } },
+          { name: "entity_ph", label: "Entité pH", selector: { entity: {} } },
+          { name: "entity_orp", label: "Entité ORP", selector: { entity: {} } },
+          { name: "entity_bromine", label: "Entité Brome", selector: { entity: {} } },
+          { name: "entity_alkalinity", label: "Entité TAC", selector: { entity: {} } },
+          { name: "pos_chem_x", label: "Position Horizontale (0-100%)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+          { name: "pos_chem_y", label: "Position Verticale (0-100%)", selector: { number: { min: 0, max: 100, mode: "box" } } }
         ]
       },
 
       {
-        title: "⚡ BLOC ÉLECTRIQUE & SYSTÈME",
+        title: "⚡ BLOC SYSTÈME & ÉNERGIE",
+        name: "sys_settings",
         type: "expandable",
         schema: [
-          { name: "title_elec", label: "Titre du bloc Système", selector: { text: {} } },
-          { name: "entity_power", label: "Capteur : Consommation (Watts)", selector: { entity: {} } },
-          { name: "entity_amp", label: "Capteur : Intensité SPA (Ampères)", selector: { entity: {} } },
-          { name: "entity_vac_current", label: "Capteur : Intensité Aspirateur", selector: { entity: {} } },
-          { name: "entity_tv", label: "Capteur : État de la TV", selector: { entity: {} } },
-          { name: "entity_alexa", label: "Capteur : État d'Alexa", selector: { entity: {} } },
-          {
-            name: "", type: "grid", schema: [
-              { name: "pos_elec_x", label: "Position X (%)", selector: { number: { min: 0, max: 100 } } },
-              { name: "pos_elec_y", label: "Position Y (%)", selector: { number: { min: 0, max: 100 } } },
-            ]
-          }
+          { name: "title_elec", label: "Nom du bloc (ex: SYSTÈME)", selector: { text: {} } },
+          { name: "entity_power", label: "Consommation (Watts)", selector: { entity: {} } },
+          { name: "entity_amp", label: "Intensité SPA (Ampères)", selector: { entity: {} } },
+          { name: "entity_vac_current", label: "Intensité Aspirateur", selector: { entity: {} } },
+          { name: "entity_tv", label: "Entité TV", selector: { entity: {} } },
+          { name: "entity_alexa", label: "Entité Alexa", selector: { entity: {} } },
+          { name: "pos_elec_x", label: "Position Horizontale (%)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+          { name: "pos_elec_y", label: "Position Verticale (%)", selector: { number: { min: 0, max: 100, mode: "box" } } }
         ]
       },
 
       {
-        title: "📊 TABLEAU IDÉAL & BOUTONS LATERAUX",
+        title: "📊 OPTIONS TABLEAU & BOUTONS",
+        name: "other_settings",
         type: "expandable",
         schema: [
-          { name: "show_table", label: "Afficher le petit tableau AquaChek ?", selector: { boolean: {} } },
-          { name: "show_buttons", label: "Afficher les 3 gros boutons à droite ?", selector: { boolean: {} } },
-          { name: "switch_bubbles", label: "Interrupteur : BULLES", selector: { entity: {} } },
-          { name: "switch_filter", label: "Interrupteur : FILTRATION", selector: { entity: {} } },
-          { name: "switch_light", label: "Interrupteur : LUMIÈRE", selector: { entity: {} } },
-          {
-            name: "", type: "grid", schema: [
-              { name: "pos_tab_x", label: "Tableau : Pos X (%)", selector: { number: { min: 0, max: 100 } } },
-              { name: "pos_tab_y", label: "Tableau : Pos Y (%)", selector: { number: { min: 0, max: 100 } } },
-              { name: "pos_btn_x", label: "Boutons : Pos X (%)", selector: { number: { min: 0, max: 100 } } },
-              { name: "pos_btn_y", label: "Boutons : Pos Y (%)", selector: { number: { min: 0, max: 100 } } },
-            ]
-          }
+          { name: "show_table", label: "Afficher Tableau AquaChek ?", selector: { boolean: {} } },
+          { name: "show_buttons", label: "Afficher Boutons Latéraux ?", selector: { boolean: {} } },
+          { name: "switch_bubbles", label: "Switch Bulles", selector: { entity: {} } },
+          { name: "switch_filter", label: "Switch Filtration", selector: { entity: {} } },
+          { name: "switch_light", label: "Switch Lumière", selector: { entity: {} } },
+          { name: "pos_tab_x", label: "Tableau Pos X (%)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+          { name: "pos_tab_y", label: "Tableau Pos Y (%)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+          { name: "pos_btn_x", label: "Boutons Pos X (%)", selector: { number: { min: 0, max: 100, mode: "box" } } },
+          { name: "pos_btn_y", label: "Boutons Pos Y (%)", selector: { number: { min: 0, max: 100, mode: "box" } } }
         ]
       }
     ];
@@ -170,7 +159,7 @@ class SpaCard extends LitElement {
 
     const topSwitches = [];
     for (let i = 1; i <= 8; i++) {
-      const entity = c[`switch_${i}_entity` ?? ''];
+      const entity = c[`switch_${i}_entity`];
       if (entity) {
         const state = this._getState(entity);
         topSwitches.push(html`
@@ -235,7 +224,7 @@ class SpaCard extends LitElement {
     .header { position: absolute; top: 10px; left: 15px; font-weight: 900; font-size: 0.95em; color: #00f9f9; text-transform: uppercase; text-shadow: 2px 2px 4px black; }
     .top-bar { position: absolute; top: 40px; left: 8px; right: 8px; display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
     .top-switch { background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); border-radius: 6px; padding: 4px 1px; text-align: center; cursor: pointer; border: 1px solid #00f9f9; }
-    .top-switch.on { background: rgba(0, 249, 249, 0.4); box-shadow: 0 0 8px #00f9f9; }
+    .top-switch.on { background: rgba(0, 249, 249, 0.4); border-color: #00f9f9; box-shadow: 0 0 8px #00f9f9; }
     .sw-label { font-size: 0.45em; font-weight: 900; text-transform: uppercase; margin-bottom: 2px; }
     .glass { position: absolute; background: rgba(0,0,0,0.65); backdrop-filter: blur(12px); border-radius: 12px; padding: 10px; border: 1px solid #00f9f9; min-width: 170px; }
     .titre { font-size: 0.58em; color: #00f9f9; font-weight: 900; text-transform: uppercase; margin-bottom: 6px; border-bottom: 1.5px solid rgba(0, 249, 249, 0.3); padding-bottom: 2px; }
@@ -254,4 +243,4 @@ class SpaCard extends LitElement {
 customElements.define("spa-card-editor", SpaCardEditor);
 customElements.define("spa-card", SpaCard);
 window.customCards = window.customCards || [];
-window.customCards.push({ type: "spa-card", name: "SPA Card Pro", preview: true });
+window.customCards.push({ type: "spa-card", name: "SPA Card Label Fix", preview: true });
