@@ -20,19 +20,16 @@ class SpaCardEditor extends LitElement {
   render() {
     if (!this.hass || !this._config) return html``;
     const schemas = [
-      // GÉNÉRAL
       [{ name: "card_title", label: "Titre", selector: { text: {} } }, 
        { name: "title_align", label: "Alignement", selector: { select: { options: [{value: "left", label: "Gauche"}, {value: "center", label: "Milieu"}, {value: "right", label: "Droite"}] } } },
        { name: "title_size", label: "Taille Titre (px)", selector: { number: { min: 8, max: 60 } } },
        { name: "card_height_v", label: "Hauteur Carte (% écran)", selector: { number: { min: 20, max: 100, mode: "slider" } } },
        { name: "background_image", label: "Image fond (URL)", selector: { text: {} } }],
-      // BOUTONS
       [{ name: "btn_y", label: "Position Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
        { name: "btn_w", label: "Largeur (%)", selector: { number: { min: 10, max: 100 } } }, 
        { name: "btn_h", label: "Hauteur px", selector: { number: { min: 20, max: 300 } } }, 
        { name: "btn_fs", label: "Taille texte", selector: { number: { min: 6, max: 30 } } },
         ...Array.from({length: 8}, (_, i) => [{ name: `switch_${i+1}_entity`, label: `B${i+1} Entité`, selector: { entity: {} } }, { name: `switch_${i+1}_label`, label: `Nom`, selector: { text: {} } }, { name: `switch_${i+1}_icon`, label: `Icone`, selector: { icon: {} } }]).flat()],
-      // SONDES (TEMP + CHIMIE)
       [{ name: "entity_water_temp", label: "Eau", selector: { entity: {} } }, { name: "entity_ambient_temp", label: "Air", selector: { entity: {} } },
        { name: "temp_fs", label: "Taille texte Temp", selector: { number: { min: 8, max: 40 } } },
        { name: "pos_temp_x", label: "Temp X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } }, { name: "pos_temp_y", label: "Temp Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
@@ -42,13 +39,10 @@ class SpaCardEditor extends LitElement {
        { name: "chem_fs", label: "Taille texte Chimie", selector: { number: { min: 8, max: 40 } } },
        { name: "pos_chem_x", label: "Chimie X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } }, { name: "pos_chem_y", label: "Chimie Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
        { name: "chem_w", label: "Chimie Largeur px", selector: { number: { min: 50, max: 600 } } }, { name: "chem_h", label: "Chimie Hauteur px", selector: { number: { min: 50, max: 600 } } }],
-      // SYSTÈME
       [...Array.from({length: 14}, (_, i) => [{ name: `sys_entity_${i+1}`, label: `Entité ${i+1}`, selector: { entity: {} } }, { name: `sys_label_${i+1}`, label: `Nom`, selector: { text: {} } }, { name: `sys_icon_${i+1}`, label: `Icone`, selector: { icon: {} } }]).flat(),
        { name: "sys_fs", label: "Taille texte", selector: { number: { min: 8, max: 35 } } }, { name: "pos_elec_x", label: "X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } }, { name: "pos_elec_y", label: "Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
        { name: "sys_w", label: "Largeur px", selector: { number: { min: 100, max: 800 } } }, { name: "sys_h", label: "Hauteur px", selector: { number: { min: 50, max: 800 } } }],
-      // CAMÉRA
       [{ name: "camera_entity", label: "Caméra", selector: { entity: { domain: "camera" } } }, { name: "pos_cam_x", label: "X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } }, { name: "pos_cam_y", label: "Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } }, { name: "camera_width", label: "W px", selector: { number: { min: 100, max: 800 } } }, { name: "camera_height", label: "H px", selector: { number: { min: 100, max: 800 } } }],
-      // IDÉAL
       [{ name: "show_ideal_table", label: "Afficher Cibles?", selector: { boolean: {} } }, { name: "pos_ideal_x", label: "X (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } }, { name: "pos_ideal_y", label: "Y (%)", selector: { number: { min: 0, max: 100, mode: "slider" } } },
        { name: "ideal_w", label: "W px", selector: { number: { min: 50, max: 500 } } }, { name: "ideal_h", label: "H px", selector: { number: { min: 50, max: 500 } } }, { name: "ideal_fs", label: "Taille texte", selector: { number: { min: 8, max: 35 } } }]
     ];
@@ -69,19 +63,10 @@ class SpaCard extends LitElement {
     const rawVal = parseFloat(s.state);
     const val = !isNaN(rawVal) ? rawVal.toFixed(1) : s.state;
     const unit = s.attributes.unit_of_measurement || '';
-    
-    // Détection auto consommation (W ou A)
     const isPower = unit.toLowerCase().includes('w') || unit.toLowerCase().includes('a');
     const consuming = isPower && rawVal > 0.5;
 
-    return { 
-      val, 
-      unit, 
-      icon: icon || s.attributes.icon, 
-      active: consuming || !['off', 'unavailable', 'unknown', 'standby'].includes(s.state.toLowerCase()),
-      isPower,
-      consuming
-    };
+    return { val, unit, icon: icon || s.attributes.icon, active: consuming || !['off', 'unavailable', 'unknown', 'standby'].includes(s.state.toLowerCase()), consuming };
   }
 
   _getChemColor(type, value) {
@@ -146,6 +131,7 @@ class SpaCard extends LitElement {
           <div class="id"><span>pH</span><span>7.2 - 7.6</span></div>
           <div class="id"><span>ORP</span><span>> 650 mV</span></div>
           <div class="id"><span>Brome</span><span>3.0 - 5.0</span></div>
+          <div class="id"><span>TAC</span><span>80 - 120</span></div>
         </div>` : ''}
       </ha-card>
     `;
