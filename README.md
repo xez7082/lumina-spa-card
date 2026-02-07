@@ -1,57 +1,65 @@
-# 🛁 SPA Card
+🛁 SPA Card Master Ultimate
+SPA Card Master est la solution ultime pour transformer votre dashboard Home Assistant en une véritable console de contrôle futuriste pour votre spa. Alliant esthétique Glassmorphism et monitoring de précision, elle centralise toutes les données critiques de votre bassin.
 
-[![HACS](https://img.shields.io/badge/HACS-Default-blue.svg)](https://github.com/hacs/integration)
-![Version](https://img.shields.io/github/v/release/xez7082/spa-card?include_prereleases)
-[![License](https://img.shields.io/github/license/xez7082/spa-card)](LICENSE)
+🖼️ Aperçu de l'interface
+✨ Points Forts
+💎 Design Glassmorphism : Effet de flou d'arrière-plan (backdrop-filter) pour une intégration élégante sur n'importe quel fond.
 
-**SPA Card** est une carte Lovelace premium pour Home Assistant... pour Home Assistant, conçue pour transformer le monitoring de votre spa en une interface futuriste et intuitive. Surveillez la température, la chimie de l'eau et pilotez vos équipements avec style.
+🚨 Smart Alerts : Colorisation dynamique des capteurs. Les valeurs de pH, ORP et Brome passent au rouge instantanément en cas de dépassement des seuils de sécurité.
 
----
+📏 Full Control (UI) : Éditeur visuel complet avec 6 onglets pour régler au pixel près la position (X/Y) et la taille (W/H) de chaque élément.
 
-## 🖼️ Aperçu
+📱 Adaptative Height : Réglage de la hauteur de la carte en % de l'écran (vh), idéal pour un affichage plein écran sur tablettes (Fully Kiosk).
 
-![Spa Preview](https://raw.githubusercontent.com/xez7082/lumina-spa-card/main/sparond2.png)
+🛠️ Ultra-Complet :
 
----
+Jusqu'à 8 boutons de commande (Bulles, LED, Pompe, etc.).
 
-## ✨ Fonctionnalités
+Jusqu'à 14 indicateurs système (Énergie, Aspirateur, Statut TV, etc.).
 
-* 💎 **Design Glassmorphism** : Interface translucide avec effet de flou arrière-plan (backdrop-filter).
-* 🌡️ **Double Température** : Suivi en temps réel de la température de l'eau et de l'air ambiant.
-* 🧪 **Analyse de l'eau** : Monitoring complet du pH, ORP, Brome (Br) et Alcalinité (TAC).
-* ⚡ **Énergie & Système** : Puissance (Watts), ampérage du SPA et de l'**aspirateur**.
-* 🔘 **Commandes Interactives** : Boutons tactiles pour les bulles, la filtration et l'éclairage **LED**.
-* 📺 **Indicateurs Multimédia** : Statut d'activation pour TV et Alexa intégré.
-* 📊 **Tableau de Référence** : Rappel des seuils idéaux AquaChek directement sur la carte.
-* ⚙️ **Éditeur Visuel Avancé** : Configuration simplifiée par onglets avec réglage précis des positions (X/Y %) pour chaque bloc de données.
+Monitoring Chimie complet : pH, ORP, Brome, TAC.
 
----
+Intégration Flux Vidéo (Caméra).
 
-## 📦 Installation
+🧪 Seuils de Sécurité Intégrés
+La carte surveille pour vous la qualité de l'eau : | Paramètre | Plage Idéale | Alerte Visuelle | | :--- | :--- | :--- | | pH | 7.2 — 7.6 | 🔴 Rouge si hors plage | | ORP | > 650 mV | 🔴 Rouge si trop bas | | Brome | 3.0 — 5.0 | 🔴 Rouge si hors plage |
 
-### Via HACS (Recommandé)
-1. Ouvrez **HACS** → **Frontend** → **Menu (⋮)** → **Dépôts personnalisés**.
-2. Ajoutez l'URL de ce dépôt : `https://github.com/xez7082/spa-card`.
-3. Sélectionnez le type **Lovelace**.
-4. Cliquez sur **Installer**.
-5. Rafraîchissez votre navigateur (**Ctrl + F5**).
+📦 Installation
+Via HACS (Recommandé)
+Ouvrez HACS → Frontend.
 
----
+Cliquez sur les 3 points (⋮) en haut à droite → Dépôts personnalisés.
 
-## 🧩 Configuration
+Collez l'URL : https://github.com/xez7082/spa-card.
 
-La carte dispose d'un **éditeur visuel complet** (UI) intégré à Home Assistant. Vous n'avez normalement pas besoin de modifier le YAML manuellement.
+Sélectionnez la catégorie Lovelace.
 
-### Exemple de configuration YAML
-```yaml
-type: custom:spa-card
-card_title: "Mon Spa"
-background_image: "/local/sparond2.jpg"
-entity_water_temp: sensor.spa_water_temperature
-entity_ph: sensor.spa_ph
-entity_orp: sensor.spa_orp
-switch_bubbles: switch.spa_bubbles
-switch_filter: switch.spa_filter
-switch_light: switch.spa_light
-pos_temp_x: 5
-pos_temp_y: 10
+Recherchez "SPA Master Ultimate" et installez.
+
+Redémarrez/Rafraîchissez votre interface Home Assistant.
+
+🧩 Utilisation & Configuration
+Plus besoin de toucher au YAML ! Ajoutez la carte à votre tableau de bord et utilisez l'éditeur visuel interactif pour configurer vos entités.
+
+Onglets de l'éditeur :
+Général : Titre, Image de fond, Hauteur de la carte.
+
+Boutons : Assignation des 8 switchs et icônes.
+
+Sondes : Températures et capteurs chimiques.
+
+Système : Les 14 entités pour le suivi technique.
+
+Caméra : Intégration live de votre caméra de surveillance.
+
+Idéal : Affichage du tableau de rappel des cibles AquaChek.
+
+🛠️ Développement
+Si vous souhaitez modifier le style ou ajouter des fonctions :
+
+Bash
+# Clonez le dépôt
+git clone https://github.com/xez7082/spa-card.git
+📜 Licence
+Ce projet est sous licence MIT. Voir le fichier LICENSE
+ pour plus de détails.
