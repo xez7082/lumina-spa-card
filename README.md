@@ -1,65 +1,69 @@
-🛁 SPA Card Master Ultimate
-SPA Card Master est la solution ultime pour transformer votre dashboard Home Assistant en une véritable console de contrôle futuriste pour votre spa. Alliant esthétique Glassmorphism et monitoring de précision, elle centralise toutes les données critiques de votre bassin.
+# 🛁 SPA Card Master Ultimate
 
-🖼️ Aperçu de l'interface
-✨ Points Forts
-💎 Design Glassmorphism : Effet de flou d'arrière-plan (backdrop-filter) pour une intégration élégante sur n'importe quel fond.
+[![HACS](https://img.shields.io/badge/HACS-Default-blue.svg)](https://github.com/hacs/integration)
+![Version](https://img.shields.io/github/v/release/xez7082/spa-card?include_prereleases)
+[![License](https://img.shields.io/github/license/xez7082/spa-card)](LICENSE)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/xez7082/spa-card/graphs/commit-activity)
 
-🚨 Smart Alerts : Colorisation dynamique des capteurs. Les valeurs de pH, ORP et Brome passent au rouge instantanément en cas de dépassement des seuils de sécurité.
+**SPA Card Master** est une carte Lovelace premium conçue pour transformer votre dashboard Home Assistant en une console de contrôle futuriste. Alliant esthétique **Glassmorphism** et monitoring de précision, elle centralise toutes les données critiques de votre spa sur une interface unique et ultra-personnalisable.
 
-📏 Full Control (UI) : Éditeur visuel complet avec 6 onglets pour régler au pixel près la position (X/Y) et la taille (W/H) de chaque élément.
+---
 
-📱 Adaptative Height : Réglage de la hauteur de la carte en % de l'écran (vh), idéal pour un affichage plein écran sur tablettes (Fully Kiosk).
+## 🖼️ Aperçu
 
-🛠️ Ultra-Complet :
+![Spa Preview](https://raw.githubusercontent.com/xez7082/lumina-spa-card/main/sparond2.png)
+*[Image indicative de l'interface avec effet de flou et monitoring chimique]*
 
-Jusqu'à 8 boutons de commande (Bulles, LED, Pompe, etc.).
+---
 
-Jusqu'à 14 indicateurs système (Énergie, Aspirateur, Statut TV, etc.).
+## ✨ Fonctionnalités Clés
 
-Monitoring Chimie complet : pH, ORP, Brome, TAC.
+* 💎 **Design Glassmorphism** : Interface translucide avec effet de flou d'arrière-plan (`backdrop-filter`) pour un rendu moderne et épuré.
+* 🚨 **Alertes de Santé Intelligentes** : Les valeurs de **pH**, **ORP** et **Brome** changent de couleur (Rouge) dynamiquement dès qu'elles sortent des seuils de sécurité.
+* 📏 **Éditeur Visuel Avancé (UI)** : Configuration complète via l'interface Home Assistant. Plus besoin de YAML pour régler les positions (X/Y) ou les tailles (W/H) des blocs.
+* 📱 **Responsive & Tablet Ready** : Réglage de la hauteur globale en `% écran` (vh), parfait pour un affichage plein écran sur tablettes de contrôle.
+* 🔘 **Contrôle Interactif** : Jusqu'à 8 boutons tactiles pour piloter filtration, bulles, pompes et éclairages LED.
+* 📊 **Monitoring Système Exhaustif** : Emplacement pour 14 entités supplémentaires (puissance Watts, ampérage, statut TV, Alexa, aspirateur, etc.).
 
-Intégration Flux Vidéo (Caméra).
+---
 
-🧪 Seuils de Sécurité Intégrés
-La carte surveille pour vous la qualité de l'eau : | Paramètre | Plage Idéale | Alerte Visuelle | | :--- | :--- | :--- | | pH | 7.2 — 7.6 | 🔴 Rouge si hors plage | | ORP | > 650 mV | 🔴 Rouge si trop bas | | Brome | 3.0 — 5.0 | 🔴 Rouge si hors plage |
+## 🧪 Analyse de l'eau (Seuils Automatiques)
 
-📦 Installation
-Via HACS (Recommandé)
-Ouvrez HACS → Frontend.
+La carte intègre une logique de surveillance basée sur les standards de l'industrie :
 
-Cliquez sur les 3 points (⋮) en haut à droite → Dépôts personnalisés.
+| Paramètre | Plage Idéale | Comportement Alerte |
+| :--- | :--- | :--- |
+| **pH** | `7.2` — `7.6` | 🔴 Rouge si déséquilibré |
+| **ORP** | `> 650 mV` | 🔴 Rouge si désinfection insuffisante |
+| **Brome** | `3.0` — `5.0` | 🔴 Rouge si hors limites |
 
-Collez l'URL : https://github.com/xez7082/spa-card.
+---
 
-Sélectionnez la catégorie Lovelace.
+## 📦 Installation
 
-Recherchez "SPA Master Ultimate" et installez.
+### Via HACS (Recommandé)
+1. Ouvrez **HACS** → **Frontend**.
+2. Cliquez sur les **3 points (⋮)** en haut à droite → **Dépôts personnalisés**.
+3. Ajoutez l'URL suivante : `https://github.com/xez7082/spa-card`.
+4. Sélectionnez la catégorie **Lovelace**.
+5. Cliquez sur **Installer**.
+6. Rafraîchissez votre navigateur (`Ctrl + F5`).
 
-Redémarrez/Rafraîchissez votre interface Home Assistant.
+---
 
-🧩 Utilisation & Configuration
-Plus besoin de toucher au YAML ! Ajoutez la carte à votre tableau de bord et utilisez l'éditeur visuel interactif pour configurer vos entités.
+## 🧩 Configuration
 
-Onglets de l'éditeur :
-Général : Titre, Image de fond, Hauteur de la carte.
+La carte est dotée d'un éditeur "Drag & Drop" simulé par des curseurs de précision.
 
-Boutons : Assignation des 8 switchs et icônes.
-
-Sondes : Températures et capteurs chimiques.
-
-Système : Les 14 entités pour le suivi technique.
-
-Caméra : Intégration live de votre caméra de surveillance.
-
-Idéal : Affichage du tableau de rappel des cibles AquaChek.
-
-🛠️ Développement
-Si vous souhaitez modifier le style ou ajouter des fonctions :
-
-Bash
-# Clonez le dépôt
-git clone https://github.com/xez7082/spa-card.git
-📜 Licence
-Ce projet est sous licence MIT. Voir le fichier LICENSE
- pour plus de détails.
+### Exemple de structure YAML (généré par l'UI) :
+```yaml
+type: custom:spa-card
+card_title: "MON SPA"
+card_height_v: 80
+background_image: "/local/spa_bg.jpg"
+entity_water_temp: sensor.spa_water_temp
+entity_ph: sensor.spa_ph
+entity_orp: sensor.spa_orp
+pos_chem_x: 10
+pos_chem_y: 45
+chem_w: 250
